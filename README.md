@@ -1,3 +1,3 @@
-# inset_shell
+# inset
 
-A new Flutter project.
+Feature packed minimalist bar and widgets for linux made with flutter. 

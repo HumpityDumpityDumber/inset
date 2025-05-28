@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_inner_shadow/flutter_inner_shadow.dart';
-import 'theme.dart';
+import '../theme.dart';
 
-class ClockModule extends StatelessWidget {
-  const ClockModule({super.key});
+class VolumeModule extends StatelessWidget {
+  const VolumeModule({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,7 @@ class ClockModule extends StatelessWidget {
         ),
       ],
       child: Container(
-        width: 160,
+        width: 276,
         height: 49,
         decoration: BoxDecoration(
           color: moduleBackgroundColor,

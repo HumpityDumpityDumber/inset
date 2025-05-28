@@ -3,7 +3,8 @@ import 'package:wayland_layer_shell/wayland_layer_shell.dart';
 import 'package:wayland_layer_shell/types.dart';
 
 import 'package:inset_shell/left_side.dart';
-
+import 'package:inset_shell/right_side.dart';
+import 'package:inset_shell/middle.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,10 +19,10 @@ Future<void> main() async {
   // Get monitors and pick the first one as main monitor if available
   final monitors = await shell.getMonitorList();
   if (monitors.isNotEmpty) {
-    await shell.setMonitor(monitors[0]);
+    await shell.setMonitor(monitors[1]);
   }
 
-  await shell.setLayer(ShellLayer.layerOverlay);
+  await shell.setLayer(ShellLayer.layerTop);
 
   for (final edge in [ShellEdge.edgeBottom, ShellEdge.edgeLeft, ShellEdge.edgeRight]) {
     await shell.setAnchor(edge, true);
@@ -44,7 +45,17 @@ Future<void> main() async {
         scaffoldBackgroundColor: Colors.transparent, // Make Scaffold background transparent
         // You can also adjust canvasColor, backgroundColor here if needed
       ),
-      home: const LeftSide(),
+      home: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: const [
+            LeftSide(),
+            Middle(),   // <-- Add this line for your center widget
+            RightSide(),
+          ],
+        ),
+      ),
     ),
   );
 

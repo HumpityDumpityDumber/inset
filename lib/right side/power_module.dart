@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_inner_shadow/flutter_inner_shadow.dart';
-import 'theme.dart';
+import '../theme.dart';
 
-class StatusModule extends StatelessWidget {
-  const StatusModule({super.key});
+class PowerModule extends StatelessWidget {
+  const PowerModule({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +19,7 @@ class StatusModule extends StatelessWidget {
         width: 49,
         height: 49,
         decoration: BoxDecoration(
-          color: moduleBackgroundColor,
+          color: Color(0xFFD9D9D9),
           shape: BoxShape.circle,
         ),
       ),

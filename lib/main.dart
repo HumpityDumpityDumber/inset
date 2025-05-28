@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:wayland_layer_shell/wayland_layer_shell.dart';
 import 'package:wayland_layer_shell/types.dart';
 
+import 'package:inset_shell/left_side.dart';
+
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -37,11 +40,12 @@ Future<void> main() async {
   runApp(
     MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Container(
-        height: 49,
-        width: double.infinity,
-        color: Colors.white,
+      theme: ThemeData(
+        scaffoldBackgroundColor: Colors.transparent, // Make Scaffold background transparent
+        // You can also adjust canvasColor, backgroundColor here if needed
       ),
+      home: const LeftSide(),
     ),
   );
+
 }

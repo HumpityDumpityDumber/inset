@@ -17,10 +17,13 @@ Future<void> main() async {
   }
 
   // Get monitors and pick the first one as main monitor if available
-  final monitors = await shell.getMonitorList();
-  if (monitors.isNotEmpty) {
-    await shell.setMonitor(monitors[1]);
-  }
+final monitors = await shell.getMonitorList();
+
+if (monitors.isNotEmpty) {
+  // Pick the first monitor for now (index 0)
+  await shell.setMonitor(monitors[0]);
+}
+
 
   await shell.setLayer(ShellLayer.layerTop);
 

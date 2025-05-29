@@ -17,12 +17,13 @@ Future<void> main() async {
   }
 
   // Get monitors and pick the first one as main monitor if available
-  final monitors = await shell.getMonitorList();
+final monitors = await shell.getMonitorList();
 
-  if (monitors.isNotEmpty) {
-    // Pick the first monitor for now (index 0)
-    await shell.setMonitor(monitors[0]);
-  }
+if (monitors.isNotEmpty) {
+  // Pick the first monitor for now (index 0)
+  await shell.setMonitor(monitors[0]);
+}
+
 
   await shell.setLayer(ShellLayer.layerTop);
 
@@ -50,23 +51,15 @@ Future<void> main() async {
       home: Scaffold(
         backgroundColor: Colors.transparent,
         body: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: const [
-            Expanded(
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: LeftSide(),
-              ),
-            ),
-            Middle(),
-            Expanded(
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: RightSide(),
-              ),
-            ),
+            LeftSide(),
+            Middle(),   // <-- Add this line for your center widget
+            RightSide(),
           ],
         ),
       ),
     ),
   );
+
 }

@@ -12,6 +12,8 @@ dependencies:
   wayland_layer_shell: ^1.0.1
   flutter_inner_shadow: ^0.0.1
   desktop_multi_window: ^0.2.0
+  intl: ^0.19.0
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:

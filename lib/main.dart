@@ -21,7 +21,7 @@ final monitors = await shell.getMonitorList();
 
 if (monitors.isNotEmpty) {
   // Pick the first monitor for now (index 0)
-  await shell.setMonitor(monitors[0]);
+  await shell.setMonitor(monitors[1]);
 }
 
 

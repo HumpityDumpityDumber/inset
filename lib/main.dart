@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wayland_layer_shell/wayland_layer_shell.dart';
 import 'package:wayland_layer_shell/types.dart';
+import 'package:desktop_multi_window/desktop_multi_window.dart';
 
 import 'package:inset_shell/left_side.dart';
 import 'package:inset_shell/right_side.dart';

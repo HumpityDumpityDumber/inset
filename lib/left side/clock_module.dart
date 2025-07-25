@@ -42,7 +42,7 @@ class _ClockModuleState extends State<ClockModule> {
   Widget build(BuildContext context) {
     return InnerShadowContainer(
       width: 160,
-      height: 56,
+      height: 49,
       borderRadius: 24.5,
       backgroundColor: const Color(0xFFD9D9D9),
       blur: moduleShadowBlur.toDouble(),

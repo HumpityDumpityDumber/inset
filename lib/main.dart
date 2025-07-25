@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:wayland_layer_shell/wayland_layer_shell.dart';
 import 'package:wayland_layer_shell/types.dart';
@@ -6,13 +8,37 @@ import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:inset_shell/left_side.dart';
 import 'package:inset_shell/right_side.dart';
 import 'package:inset_shell/middle.dart';
-import 'dart:convert';
 
 Future<void> main([List<String>? args]) async {
   WidgetsFlutterBinding.ensureInitialized();
 
   final isMainWindow = args == null || args.isEmpty;
 
+  if (isMainWindow) {
+    final shell = WaylandLayerShell();
+
+    List<String> knownMonitorNames = [];
+
+    while (true) {
+      final currentMonitors = await shell.getMonitorList();
+      final currentNames = currentMonitors.map((m) => m.name).toList();
+
+      // Find new monitors not in known list
+      for (int i = 0; i < currentMonitors.length; i++) {
+        if (!knownMonitorNames.contains(currentNames[i])) {
+          await DesktopMultiWindow.createWindow(jsonEncode({'monitor': '$i'}));
+        }
+      }
+
+      // Update known list every time after polling
+      knownMonitorNames = currentNames;
+
+      // Wait before polling again
+      await Future.delayed(const Duration(seconds: 2));
+    }
+  }
+
+  // Secondary window logic
   final shell = WaylandLayerShell();
 
   if (!await shell.initialize(0, 0)) {
@@ -20,17 +46,13 @@ Future<void> main([List<String>? args]) async {
     return;
   }
 
-  // Parse monitor argument if present
-  int assignedMonitor = 0; // default to 1 for main window
-  if (!isMainWindow && args.isNotEmpty) {
+  int assignedMonitor = 0;
+  if (args != null && args.isNotEmpty) {
     try {
-      // args[0] is usually 'multi_window', args[2] is the json string
       final argJson = args.length > 2 ? args[2] : args[0];
       final Map<String, dynamic> parsedArgs = jsonDecode(argJson);
       if (parsedArgs.containsKey('monitor')) {
-        // Try to parse monitor index from the string
-        final monitorStr = parsedArgs['monitor'];
-        assignedMonitor = int.tryParse(monitorStr) ?? 0;
+        assignedMonitor = int.tryParse(parsedArgs['monitor'].toString()) ?? 0;
       }
     } catch (_) {
       assignedMonitor = 0;
@@ -38,31 +60,19 @@ Future<void> main([List<String>? args]) async {
   }
 
   final monitors = await shell.getMonitorList();
-  await shell.setMonitor(monitors[assignedMonitor]);
+  if (assignedMonitor >= monitors.length) assignedMonitor = 0;
 
+  await shell.setMonitor(monitors[assignedMonitor]);
   await shell.setLayer(ShellLayer.layerBottom);
 
-// Set anchor and margin for bottom, left, and right edges
-for (final edge in [ShellEdge.edgeBottom, ShellEdge.edgeLeft, ShellEdge.edgeRight]) {
-  await shell.setAnchor(edge, true);
-  await shell.setMargin(edge, 10);
-}
-
-await shell.setMargin(ShellEdge.edgeTop, 0);
-
-// Set exclusive zone and initialize
-await shell.setExclusiveZone(49);
-await shell.initialize(0, 49);
-
-
-  if (isMainWindow) {
-    for (int i = 1; i < monitors.length; i++) {
-      final window = await DesktopMultiWindow.createWindow(jsonEncode({
-        'monitor': '$i',
-      }));
-      window;
-    }
+  for (final edge in [ShellEdge.edgeBottom, ShellEdge.edgeLeft, ShellEdge.edgeRight]) {
+    await shell.setAnchor(edge, true);
+    await shell.setMargin(edge, 10);
   }
+  await shell.setMargin(ShellEdge.edgeTop, 0);
+
+  await shell.setExclusiveZone(49);
+  await shell.initialize(0, 49);
 
   runApp(
     MaterialApp(

@@ -5,11 +5,14 @@ class Middle extends StatelessWidget {
   const Middle({super.key});
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: const [
-        AudioModule(),
-      ],
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: const [
+          AudioModule(),
+        ],
+      ),
     );
   }
 }

@@ -6,13 +6,16 @@ class RightSide extends StatelessWidget {
   const RightSide({super.key});
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: const [
-        VolumeModule(),
-        SizedBox(width: 10),
-        PowerModule(),
-      ],
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: const [
+          VolumeModule(),
+          SizedBox(width: 10),
+          PowerModule(),
+        ],
+      ),
     );
   }
 }

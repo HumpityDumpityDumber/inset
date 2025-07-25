@@ -20,40 +20,48 @@ Future<void> main([List<String>? args]) async {
     return;
   }
 
-  // Get monitors and pick the first one as main monitor if available
-  final monitors = await shell.getMonitorList();
-  await shell.setMonitor(monitors[0]);
-  
-  if (isMainWindow) {
-    await shell.setMonitor(monitors[1]);
+  // Parse monitor argument if present
+  int assignedMonitor = 0; // default to 1 for main window
+  if (!isMainWindow && args.isNotEmpty) {
+    try {
+      // args[0] is usually 'multi_window', args[2] is the json string
+      final argJson = args.length > 2 ? args[2] : args[0];
+      final Map<String, dynamic> parsedArgs = jsonDecode(argJson);
+      if (parsedArgs.containsKey('monitor')) {
+        // Try to parse monitor index from the string
+        final monitorStr = parsedArgs['monitor'];
+        assignedMonitor = int.tryParse(monitorStr) ?? 0;
+      }
+    } catch (_) {
+      assignedMonitor = 0;
+    }
   }
+
+  final monitors = await shell.getMonitorList();
+  await shell.setMonitor(monitors[assignedMonitor]);
 
   await shell.setLayer(ShellLayer.layerBottom);
 
-  for (final edge in [ShellEdge.edgeBottom, ShellEdge.edgeLeft, ShellEdge.edgeRight]) {
-    await shell.setAnchor(edge, true);
-  }
+// Set anchor and margin for bottom, left, and right edges
+for (final edge in [ShellEdge.edgeBottom, ShellEdge.edgeLeft, ShellEdge.edgeRight]) {
+  await shell.setAnchor(edge, true);
+  await shell.setMargin(edge, 10);
+}
 
-  await shell.setExclusiveZone(49);
+await shell.setMargin(ShellEdge.edgeTop, 0);
 
-  for (final edge in [ShellEdge.edgeBottom, ShellEdge.edgeLeft, ShellEdge.edgeRight]) {
-    await shell.setMargin(edge, 10);
-  }
+// Set exclusive zone and initialize
+await shell.setExclusiveZone(49);
+await shell.initialize(0, 49);
 
-  await shell.setMargin(ShellEdge.edgeTop, 0);
-
-  await shell.initialize(0, 49);
 
   if (isMainWindow) {
-    final window = await DesktopMultiWindow.createWindow(jsonEncode({
-      'args1': 'Sub window',
-      'args2': 100,
-      'args3': true,
-      'business': 'business_test',
-    }));
-    window
-    ..center()
-    ..setTitle('second bar');
+    for (int i = 1; i < monitors.length; i++) {
+      final window = await DesktopMultiWindow.createWindow(jsonEncode({
+        'monitor': '$i',
+      }));
+      window;
+    }
   }
 
   runApp(

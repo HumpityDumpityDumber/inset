@@ -6,12 +6,15 @@ class LeftSide extends StatelessWidget {
   const LeftSide({super.key});
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: const [
-        StatusModule(),
-        SizedBox(width: 10),
-        ClockModule(),
-      ],
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Row(
+        children: const [
+          StatusModule(),
+          SizedBox(width: 10),
+          ClockModule(),
+        ],
+      ),
     );
   }
 }

@@ -14,6 +14,7 @@ dependencies:
   desktop_multi_window: ^0.2.1
   intl: ^0.19.0
   google_fonts: ^6.2.1
+  inner_shadow_container: ^1.0.4
 
 dev_dependencies:
   flutter_test:

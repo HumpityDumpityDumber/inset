@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_inner_shadow/flutter_inner_shadow.dart';
+import 'package:inner_shadow_container/inner_shadow_container.dart';
 import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme.dart';
@@ -40,33 +40,31 @@ class _ClockModuleState extends State<ClockModule> {
 
   @override
   Widget build(BuildContext context) {
-    return InnerShadow(
-      shadows: [
-        BoxShadow(
-          color: Colors.black.withAlpha(moduleShadowAlpha),
-          blurRadius: moduleShadowBlur,
-          offset: moduleShadowOffset,
-        ),
-      ],
+    return InnerShadowContainer(
+      width: 160,
+      height: 56,
+      borderRadius: 24.5,
+      backgroundColor: const Color(0xFFD9D9D9),
+      blur: moduleShadowBlur.toDouble(),
+      offset: moduleShadowOffset,
+      shadowColor: Colors.black.withAlpha(moduleShadowAlpha),
+      isShadowTopLeft: true,
+      isShadowTopRight: true,
+      isShadowBottomLeft: true,
+      isShadowBottomRight: true,
       child: Container(
-        width: 160,
-        height: 56, // Increased height for better vertical space
-        decoration: BoxDecoration(
-          color: const Color(0xFFD9D9D9),
-          borderRadius: BorderRadius.circular(24.5),
-        ),
         alignment: Alignment.centerLeft,
         padding: const EdgeInsets.only(left: 24),
         child: Text(
-          _timeString, // Placeholder to test alignment
+          _timeString,
           style: GoogleFonts.inter(
             fontSize: 20.5,
             fontWeight: FontWeight.w500,
             color: Colors.black87,
           ),
           textAlign: TextAlign.left,
-          ),
         ),
-      );
+      ),
+    );
   }
 }

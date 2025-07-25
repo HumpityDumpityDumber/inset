@@ -17,31 +17,27 @@ struct _MyApplication {
 
 G_DEFINE_TYPE(MyApplication, my_application, GTK_TYPE_APPLICATION)
 
+// Shared transparency setup function
+static void apply_transparency(GtkWidget* window) {
+  gtk_widget_set_app_paintable(window, TRUE);
+  GdkScreen* screen = gtk_window_get_screen(GTK_WINDOW(window));
+  GdkVisual* visual = gdk_screen_get_rgba_visual(screen);
+  if (visual != NULL) {
+    gtk_widget_set_visual(window, visual);
+  }
+}
+
 // Implements GApplication::activate.
 static void my_application_activate(GApplication* application) {
   MyApplication* self = MY_APPLICATION(application);
   GtkWindow* window =
       GTK_WINDOW(gtk_application_window_new(GTK_APPLICATION(application)));
 
-  // Make window paintable and set RGBA visual for transparency
-  gtk_widget_set_app_paintable(GTK_WIDGET(window), TRUE);
+  apply_transparency(GTK_WIDGET(window));  // <-- Apply transparency to main window
 
-  GdkScreen* screen = gtk_window_get_screen(window);
-  GdkVisual* visual = gdk_screen_get_rgba_visual(screen);
-  if (visual != NULL) {
-    gtk_widget_set_visual(GTK_WIDGET(window), visual);
-  }
-
-  // Use a header bar when running in GNOME as this is the common style used
-  // by applications and is the setup most users will be using (e.g. Ubuntu
-  // desktop).
-  // If running on X and not using GNOME then just use a traditional title bar
-  // in case the window manager does more exotic layout, e.g. tiling.
-  // If running on Wayland assume the header bar will work (may need changing
-  // if future cases occur).
   gboolean use_header_bar = FALSE;
 #ifdef GDK_WINDOWING_X11
-  // NOTE: Don't redeclare 'screen', just use the existing one.
+  GdkScreen* screen = gtk_window_get_screen(window);
   if (GDK_IS_X11_SCREEN(screen)) {
     const gchar* wm_name = gdk_x11_screen_get_window_manager_name(screen);
     if (g_strcmp0(wm_name, "GNOME Shell") != 0) {
@@ -72,10 +68,17 @@ static void my_application_activate(GApplication* application) {
 
   fl_register_plugins(FL_PLUGIN_REGISTRY(view));
 
-  desktop_multi_window_plugin_set_window_created_callback([](FlPluginRegistry* registry){
+  // Transparency + LayerShell for subwindows
+  desktop_multi_window_plugin_set_window_created_callback([](FlPluginRegistry* registry) {
     g_autoptr(FlPluginRegistrar) wayland_layer_shell_registrar =
       fl_plugin_registry_get_registrar_for_plugin(registry, "WaylandLayerShellPlugin");
     wayland_layer_shell_plugin_register_with_registrar(wayland_layer_shell_registrar);
+
+    FlView* sub_view = FL_VIEW(fl_plugin_registrar_get_view(wayland_layer_shell_registrar));
+    GtkWidget* sub_window = gtk_widget_get_toplevel(GTK_WIDGET(sub_view));
+    if (GTK_IS_WINDOW(sub_window)) {
+      apply_transparency(sub_window);  // <-- Apply transparency to each subwindow
+    }
   });
 
   gtk_widget_grab_focus(GTK_WIDGET(view));
@@ -84,7 +87,6 @@ static void my_application_activate(GApplication* application) {
 // Implements GApplication::local_command_line.
 static gboolean my_application_local_command_line(GApplication* application, gchar*** arguments, int* exit_status) {
   MyApplication* self = MY_APPLICATION(application);
-  // Strip out the first argument as it is the binary name.
   self->dart_entrypoint_arguments = g_strdupv(*arguments + 1);
 
   g_autoptr(GError) error = nullptr;

@@ -123,6 +123,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.2"
+  inner_shadow_container:
+    dependency: "direct main"
+    description:
+      name: inner_shadow_container
+      sha256: "3f381395dbcfba84303d9d008fcea9112210291d4a1d632bc44b6f2b155caf41"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.4"
   intl:
     dependency: "direct main"
     description:
